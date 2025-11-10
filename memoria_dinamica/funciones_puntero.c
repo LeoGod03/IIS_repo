@@ -1,11 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h> // Necesario para malloc, free, NULL
 
-/**
- * @brief Imprime los elementos de un arreglo de enteros.
- * @param arr El arreglo a imprimir.
- * @param tam El número de elementos en el arreglo.
- */
 void imprimirArreglo(int* arr, int tam) {
     if (arr == NULL) {
         printf("Arreglo es NULL\n");
@@ -18,17 +13,6 @@ void imprimirArreglo(int* arr, int tam) {
     printf("]\n");
 }
 
-/**
- * @brief Crea y devuelve un *nuevo* arreglo en el Heap
- * que contiene solo los números pares del arreglo original.
- *
- * @param arr El arreglo de entrada.
- * @param tam El tamaño del arreglo de entrada.
- * @param tamPares Puntero a un entero donde se almacenará
- * el tamaño del nuevo arreglo de pares.
- * @return Un puntero al nuevo arreglo de pares (alojado con malloc),
- * o NULL si no hay memoria o no hay pares.
- */
 int* filtrarPares(int* arr, int tam, int* tamPares) {
     
     //contar cuántos pares hay
@@ -95,4 +79,5 @@ int main() {
     }
 
     return 0;
+
 }
