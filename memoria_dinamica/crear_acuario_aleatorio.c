@@ -58,5 +58,6 @@ void imprimirArreglo(int* arr, int tam) {
     for (int i = 0; i < tam; i++) {
         printf("%d ", *(arr+ i));
     }
-    printf("]\n");
+    printf("\n");
 }
+
