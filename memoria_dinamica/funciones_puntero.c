@@ -1,6 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h> // Necesario para malloc, free, NULL
 
+void imprimirArreglo(int*, int)
+int* filtrarPares(int*, int, int*);
+
+int main() {
+    int arr_original[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int tam_original = 10;
+    
+    int tam_nuevo = 0; // Esta variable la llenará la función
+    int* arreglo_pares = NULL; // Aquí guardaremos el puntero al nuevo arreglo
+
+    printf("Arreglo Original: ");
+    imprimirArreglo(arr_original, tam_original);
+
+    //filtrar pares
+    arreglo_pares = filtrarPares(arr_original, tam_original, &tam_nuevo);
+
+    // verificamos
+    if (arreglo_pares == NULL) {
+        printf("La funcion devolvio NULL (No hay memoria o no habia pares).\n");
+    } else {
+        printf("Nuevo tamano: %d\n", tam_nuevo);
+        printf("Arreglo de Pares: ");
+        imprimirArreglo(arreglo_pares, tam_nuevo);
+        
+        // liberar memoria
+        free(arreglo_pares);
+        arreglo_pares = NULL; // Buena práctica
+    }
+
+    return 0;
+
+}
+
 void imprimirArreglo(int* arr, int tam) {
     if (arr == NULL) {
         printf("Arreglo es NULL\n");
@@ -52,32 +85,3 @@ int* filtrarPares(int* arr, int tam, int* tamPares) {
 }
 
 
-int main() {
-    int arr_original[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    int tam_original = 10;
-    
-    int tam_nuevo = 0; // Esta variable la llenará la función
-    int* arreglo_pares = NULL; // Aquí guardaremos el puntero al nuevo arreglo
-
-    printf("Arreglo Original: ");
-    imprimirArreglo(arr_original, tam_original);
-
-    //filtrar pares
-    arreglo_pares = filtrarPares(arr_original, tam_original, &tam_nuevo);
-
-    // verificamos
-    if (arreglo_pares == NULL) {
-        printf("La funcion devolvio NULL (No hay memoria o no habia pares).\n");
-    } else {
-        printf("Nuevo tamano: %d\n", tam_nuevo);
-        printf("Arreglo de Pares: ");
-        imprimirArreglo(arreglo_pares, tam_nuevo);
-        
-        // liberar memoria
-        free(arreglo_pares);
-        arreglo_pares = NULL; // Buena práctica
-    }
-
-    return 0;
-
-}
