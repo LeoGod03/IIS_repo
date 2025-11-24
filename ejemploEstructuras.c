@@ -1,7 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+/*
+Nota: Se cambiaron los nombres de las funciones para separar palabras con "_"
+*/
 
+//****Estructuras****
 typedef struct{
     char calle[50];
     int cp;
@@ -10,89 +14,136 @@ typedef struct{
 }Direccion;
 
 typedef struct {
-    char nombre[15];
+    char nombre[50];
     int telefono[8];
-    char correo[15];
+    char correo[50];
     Direccion direc;
 } Contacto;
 
+//***prototipos***
+void limpiar_buffer();
+void agregar_contacto(Contacto *, int *, int *);
+void imprimir_contacto(Contacto);
+void imprimir_direccion(Direccion);
+void imprimir_arreglo_contactos(Contacto *, int);
+Contacto * leer_contacto();  
 
-struct Datos{
-   int num;
-   char letra;
-   double valor;  
-   char palabra[10];  
+/*
+**Función main**
+declaración de variables importantes, función principal del programa
+*/
+void main(){
+ 
+  int tam = 10;
+  int indice = 0;
+  Contacto * contactos = (Contacto* ) malloc(tam * sizeof(Contacto));
+  if(contactos == NULL){
+    printf("No se pudo obtener memoria para el arreglo de contactos \n");
+    return;
+  }
+  for(int i = 0; i < 3; i++)
+    agregar_contacto(contactos, &indice, &tam);
+  
+  imprimir_arreglo_contactos(contactos, indice);
+ 
 
-};
-
-void imprimir_datos(struct Datos d){
-    
-     printf("num:%d\nletra:%c\nvalor:%f\npalabra:%s",d.num,d.letra,d.valor,d.palabra); 
+}
+/*Función agregar_contacto
+Agrega un nuevo contacto en el arreglo y cambia el tamaño si es necesario*/
+void agregar_contacto(Contacto * arreglo, int *indice, int * tam){
+  if(*indice == *tam){
+    print("Cambiando tamanio\n");
+    int nuevoTam = (*tam / 2) + *tam;
+    Contacto * aux = realloc(arreglo, nuevoTam * sizeof(Contacto));
+    if(aux == NULL){
+      printf("No se pudo asignar memoria \n");
+      return;
+    }
+    arreglo = aux;
+    *tam = nuevoTam;
+  }
+    Contacto * nuevoContacto;
+    nuevoContacto = leer_contacto();
+    arreglo[*indice] = *nuevoContacto;
+    (*indice) ++;
+}
+/* función que limpia el salto de línea o fin de archivo del buffer para evitar problemas con fgets*/
+void limpiar_buffer(){
+  int c;
+  while((c = getchar()) != '\n' && c != EOF);
 }
 
+/*Funcion que imprime la información de la estructura "Contacto"*/
 void imprimir_contacto(Contacto c){
 
-     
+     printf("---Info del contacto ---\n");
+     printf("Nombre: %s\n", c.nombre);
+     for(int i = 0; i < 8; i++){
+      printf("%d", c.telefono[i]);
+     }
+     printf("\n");
+     printf("Correo: %s\n", c.correo);
+     imprimir_direccion(c.direc); // aquí se muestra la información de la estructura anidada en "Contacto", es decir, "Dirección"
 
 }
-
+/*Función que imprime la información de la estructura "Dirección"*/
+void imprimir_direccion(Direccion d){
+  printf("--Imprimir dirección --\n");
+  printf("Calle: %s\n", d.calle);
+  printf("Alcaldia: %s\n", d.alcaldia);
+  printf("Num exterior: %d\n", d.numExt);
+  printf("Cp: %d\n", d.cp);
+}
+/*Función que imprime el arreglo de contactos usando la función "imprimir_contacto"*/
+void imprimir_arreglo_contactos(Contacto * arreglo, int indice){
+  for(int i = 0; i < indice; i++){
+    printf("Contacto %d\n", (i + 1));
+    imprimir_contacto(arreglo[i]);
+  }
+}
+/*Función que llena un nuevo contacto mediante teclado, dicho contacto es creado mediante memoria dínamica*/
 Contacto * leer_contacto(){
+    /*
+    Regla para "limpiar_buffer"
+    scanf() <- algo que no sea un string
+    fgets <- leer una cadena
+
+    con limpiar_buffer queda
+    scanf() <- algo que no sea un string
+    limpiar_buffer() <- después del scanf y antes del fgets
+    fgets <- leer una cadena
+
+    y también cuando la función termina con un scanf que no sea un string
+    usar "limpiar_buffer()" 
+    */
     int i;
-   //Contacto *c=malloc(sizeof(Contacto));
-    Contacto c;
-    printf("Ingresa los datos del contacto:\n");
-    printf("nombre:"); scanf("%s",c.nombre);
-    printf("correo:"); scanf("%s",c.correo);
+    Contacto *c=malloc(sizeof(Contacto));
+    if(c == NULL){
+      printf("No se pudo asignar memoria para el contacto\n");
+      return NULL;
+    }
+    printf("----Ingresa los datos del contacto ----\n");
+    printf("nombre:"); 
+    fgets(c->nombre, 50, stdin);
+    printf("correo:"); 
+    fgets(c->correo, 50, stdin);
     printf("Telefono (ingresa los 8 digitos separados por espacio):");
     for(i=0;i<8;i++) {
-      scanf("%d",&c.telefono[i]);
+      scanf("%d",&c->telefono[i]);
     }
-    printf("Direccion:\n,");
-    printf("calle:"); scanf("%s",c.direc.calle);
-    printf("numero:"); scanf("%d",&c.direc.numExt);
-    printf("cp:"); scanf("%d",&c.direc.cp);
-    printf("alcadia:"); scanf("%s",c.direc.alcaldia);
+    limpiar_buffer();
+    printf("---Direccion ---- \n");
+    printf("calle:"); 
+    fgets(c->direc.calle, 50, stdin);
+    printf("numero:"); 
+    scanf("%d",&c->direc.numExt);
+    printf("cp:");
+    scanf("%d",&c->direc.cp);
+    limpiar_buffer();
+    printf("alcadia:"); 
+    fgets(c->direc.alcaldia, 50, stdin);
   
-   return &c;
-}
-       
-
-
-void main(){
-
-  struct Datos d1;
-
-  Contacto contacto1;
-
-
-       d1.letra='n';
-       d1.num=20;
-       d1.valor=7.56;
-
-      
-       strcpy(d1.palabra,"palabra");
-
-       
-
-       imprimir_datos(d1);
-   
-    strcpy(contacto1.correo,"sf@dfsf");
-    strcpy(contacto1.nombre,"Sandra");
-    
-    contacto1.telefono[0]=5;
-    contacto1.telefono[1]=5;
-    contacto1.telefono[2]=4;
-    contacto1.telefono[3]=5;
-    contacto1.telefono[4]=5;
-    contacto1.telefono[5]=5;
-    contacto1.telefono[6]=4;
-    contacto1.telefono[7]=5;
-
-    strcpy(contacto1.direc.calle,"Av del Arbol");
-
-    printf("calle:%s",contacto1.direc.calle);
-    
-
+   return c;
 }
 
 
