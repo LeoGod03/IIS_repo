@@ -21,6 +21,8 @@ typedef struct {
 } Contacto;
 
 //***prototipos***
+void guardar_archivo(Contacto * arreglo, int indice, char * nombre_archivo);
+Contacto * cargar_archivo(int * indice, int * tam, char * nombre_archivo);
 void limpiar_buffer();
 void agregar_contacto(Contacto *, int *, int *);
 void imprimir_contacto(Contacto);
@@ -36,15 +38,26 @@ void main(){
  
   int tam = 10;
   int indice = 0;
-  Contacto * contactos = (Contacto* ) malloc(tam * sizeof(Contacto));
+  Contacto * contactos = NULL;
+  contactos = cargar_archivo(&indice, &tam, "agenda.dat");
   if(contactos == NULL){
-    printf("No se pudo obtener memoria para el arreglo de contactos \n");
-    return;
+    printf("Creando arreglo nuevo\n");
+    tam = 10;
+    indice = 0;
+    contactos = (Contacto *) malloc(tam * sizeof(Contacto));
+    if(contactos == NULL){
+      printf("No hay memoria\n");
+      return;
+    }
+
   }
-  for(int i = 0; i < 3; i++)
-    agregar_contacto(contactos, &indice, &tam);
+  //for(int i = 0; i < 2; i++)
+    //agregar_contacto(contactos, &indice, &tam);
   
   imprimir_arreglo_contactos(contactos, indice);
+
+  //guardar_archivo(contactos, indice, "agenda.dat");
+  free(contactos);
  
 
 }
@@ -52,7 +65,7 @@ void main(){
 Agrega un nuevo contacto en el arreglo y cambia el tamaño si es necesario*/
 void agregar_contacto(Contacto * arreglo, int *indice, int * tam){
   if(*indice == *tam){
-    print("Cambiando tamanio\n");
+    printf("Cambiando tamanio\n");
     int nuevoTam = (*tam / 2) + *tam;
     Contacto * aux = realloc(arreglo, nuevoTam * sizeof(Contacto));
     if(aux == NULL){
@@ -65,6 +78,7 @@ void agregar_contacto(Contacto * arreglo, int *indice, int * tam){
     Contacto * nuevoContacto;
     nuevoContacto = leer_contacto();
     arreglo[*indice] = *nuevoContacto;
+    free(nuevoContacto);
     (*indice) ++;
 }
 /* función que limpia el salto de línea o fin de archivo del buffer para evitar problemas con fgets*/
@@ -145,6 +159,44 @@ Contacto * leer_contacto(){
   
    return c;
 }
+
+void guardar_archivo(Contacto * arreglo, int indice, char * nombre_archivo){
+  FILE * archivo = fopen(nombre_archivo, "wb");
+  if(archivo == NULL){
+    printf("Error al abrir el archivo\n");
+    return;
+  }
+  fwrite(&indice, sizeof(int), 1, archivo);
+  if(indice > 0){
+    fwrite(arreglo, sizeof(Contacto), indice, archivo);
+  }
+  fclose(archivo);
+  printf("Se guardaron correctamente los datos\n");
+}
+
+Contacto * cargar_archivo(int * indice, int * tam, char * nombre_archivo){
+  FILE * archivo = fopen(nombre_archivo, "rb");
+  if(archivo == NULL){
+    printf("Error al abrir el archivo\n");
+    return NULL;
+  }
+  int cantidad = 0;
+  fread(&cantidad, sizeof(int), 1, archivo);
+  *tam = cantidad + cantidad / 2;
+  Contacto * nuevo_arreglo = (Contacto *) malloc((*tam) * sizeof(Contacto));
+  if(nuevo_arreglo == NULL){
+    printf("Error al asignar memoria \n");
+    fclose(archivo);
+    return NULL;
+  }
+  fread(nuevo_arreglo, sizeof(Contacto), cantidad, archivo);
+  *indice = cantidad;
+  fclose(archivo);
+  printf("Se cargaron los datos correctamente\n");
+  return nuevo_arreglo;
+  
+}
+
 
 
 
